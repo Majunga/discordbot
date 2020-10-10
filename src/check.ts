@@ -1,6 +1,6 @@
 export class Check {
     public static isDefined(value: any, message:string): any {
-        if(value === undefined){
+        if(value === undefined || value == null){
             throw new Error(message)
         }
 

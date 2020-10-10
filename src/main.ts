@@ -2,37 +2,33 @@
 import { Command } from 'commander'
 import { StartUp } from './startup'
 import { DiscordClient } from "./discordclient"
-import { Check } from "./check"
+import { CommandLoader } from "./commandloader"
 
 StartUp.Run();
 const client = new DiscordClient()
 
-const SendMessage = (message: string) => {
-    client.SendMessage(message)?.then(() => {
-        process.exit();
-    })
-}
 
-const createCommand = (command:string, description:string, func: (...args: any[]) => void | Promise<void>) => {
-    return new Command()
-    .command(command)
-    .description(description)
-    .action(func)
-}
 
-const post = createCommand("post [message]", "post message to discord", 
+// const mario = createCommand("mario", "post mario death to disc", 
+//     () => {
+//         SendMessage("--play https://youtu.be/hom9faSBUHQ");
+//     })
+
+const program = new Command()
+
+const commandLoader = new CommandLoader(program, client)
+
+const post = commandLoader.CreateCommand("post [message]", "post message to discord", 
     (message: string) => {
-        SendMessage(message);
-    })
+        client.SendMessage(message)?.then(() => {
+            process.exit();
+        })
+})
 
-const dundundun = createCommand("mario", "post mario death to disc", 
-    () => {
-        SendMessage("--play https://youtu.be/hom9faSBUHQ");
-    })
+commandLoader.LoadCommands()
 
-new Command()
+program
     .addCommand(post)
-    .addCommand(dundundun)
     .parse(process.argv)
 
 
