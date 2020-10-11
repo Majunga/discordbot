@@ -1,11 +1,5 @@
-import { Channel, Client, Guild, GuildMember, Collection, Snowflake, GuildChannel, TextChannel, FetchMemberOptions, VoiceChannel } from "discord.js";
+import { Client, GuildChannel, TextChannel, VoiceChannel } from "discord.js";
 import { Check } from "./check"
-import { List } from "./list"
-
-declare class member {
-    key:string
-    member:GuildMember
-}
 
 export class DiscordClient {
     private _client: Client;
