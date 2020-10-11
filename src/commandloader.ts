@@ -32,7 +32,7 @@ export class CommandLoader {
 
     private sendMessage = (message: string) => {
         this._client.SendMessage(message)?.then(() => {
-            process.exit();
-        })
+            process.exit()
+        }) ?? process.exit()
     }
 }
