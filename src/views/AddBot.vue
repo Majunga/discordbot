@@ -20,32 +20,32 @@
 
 <script>
 import EditorRow from '../components/controls/EditorRow'
+import { BotRepo } from '../repos/BotRepo'
+const botRepo = new BotRepo()
 
 export default {
   name: 'AddBot',
   components: {
     EditorRow
   },
-  props: {
-    clientId: String,
-    name: String,
-    token: String
+  data () {
+    return {
+      clientId: undefined,
+      name: undefined,
+      token: undefined
+    }
   },
   methods: {
     save () {
-      const bots = JSON.parse(localStorage.getItem('bots')) ?? []
-
-      bots.push({
+      const newBot = {
         clientId: this.clientId,
         name: this.name,
         token: this.token
-      })
+      }
 
-      console.log(bots)
+      botRepo.set(newBot)
 
-      localStorage.setItem('bots', JSON.stringify(bots))
-
-      const route = { name: 'ViewBot', params: { clientId: this.clientId, name: this.name, token: this.token } }
+      const route = { name: 'ViewBot', params: newBot }
       console.log('pushing to', route)
       this.$router.push(route)
     },

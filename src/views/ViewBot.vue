@@ -2,7 +2,6 @@
   <div>
     <h1 v-b-toggle.collapse-1 variant="primary">View bot</h1>
     <br />
-    <b-collapse id="collapse-1" class="mt-2">
       <b-container>
           <Editor-Row type="text" label="Client Id"   v-model="clientId"  required readonly />
           <Editor-Row type="text" label="Name"        v-model="name"      required />
@@ -18,29 +17,40 @@
           <br />
           <hr />
       </b-container>
-    </b-collapse>
     <b-container>
-      <Soundboard :clientId="clientId" />
+      <ServerList :clientId="clientId" />
     </b-container>
   </div>
 </template>
 
 <script>
 import EditorRow from '../components/controls/EditorRow'
-import Soundboard from '../components/Soundboard'
+import ServerList from '../components/ServerList'
+import { isDefined } from '../lib/Check'
+import { BotRepo } from '../repos/BotRepo'
+import { GuildRepo } from '../repos/GuildRepo'
+
+const botRepo = new BotRepo()
+const guildBot = new GuildRepo()
 
 export default {
   name: 'ViewBot',
   components: {
     EditorRow,
-    Soundboard
+    ServerList
   },
   computed: {
   },
   props: {
-    clientId: String,
-    name: String,
-    token: String
+    clientId: String
+  },
+  data () {
+    const bot = botRepo.get(this.clientId)
+
+    return {
+      name: bot.name,
+      token: bot.token
+    }
   },
   methods: {
     showDeleteConfirmation () {
@@ -53,25 +63,23 @@ export default {
         })
     },
     deleteBot () {
-      const oldBots = JSON.parse(localStorage.getItem('bots')) ?? []
-      const newBots = oldBots.filter((record) => record.clientId !== this.clientId)
-      localStorage.setItem('bots', JSON.stringify(newBots))
+      botRepo.remove(this.clientId)
+      const guild = guildBot.get()?.find(guild => guild.clientId === this.clientId)
+
+      if (isDefined(guild)) {
+        guildBot.remove(guild.clientId)
+      }
+
       this.$router.go(-1)
     },
     save () {
-      const oldBots = JSON.parse(localStorage.getItem('bots')) ?? []
-
-      const updatedBots = oldBots.filter((record) => record.clientId !== this.clientId)
-
-      updatedBots.push({
+      const newBot = {
         clientId: this.clientId,
         name: this.name,
         token: this.token
-      })
+      }
 
-      console.log(updatedBots)
-
-      localStorage.setItem('bots', JSON.stringify(updatedBots))
+      botRepo.set(newBot)
     },
     back () {
       this.$router.go(-1)

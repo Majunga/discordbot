@@ -4,8 +4,8 @@
     <br />
 
     <b-container>
-      <Editor-Row type="text" label="Name"  v-model="name" required />
-      <Editor-Row type="text" label="Url"  v-model="url" required />
+      <Editor-Row type="text" label="Name"      v-model="name"     required />
+      <Editor-Row type="text" label="Url"       v-model="url"      required />
       <Editor-Row type="text" label="Image Url" v-model="imageUrl" required />
       <hr />
       <b-button-group class="float-right">
@@ -18,6 +18,8 @@
 
 <script>
 import EditorRow from '../components/controls/EditorRow'
+import { SoundclipRepo } from '../repos/SoundclipRepo'
+const soundclipRepo = new SoundclipRepo()
 
 export default {
   name: 'AddSoundClip',
@@ -26,25 +28,26 @@ export default {
   },
   props: {
     clientId: String,
-    name: String,
-    url: String,
-    imageUrl: String
+    guildId: String
+  },
+  data () {
+    return {
+      name: undefined,
+      url: undefined,
+      imageUrl: undefined
+    }
   },
   methods: {
     save () {
-      const soundclips = JSON.parse(localStorage.getItem('soundclips')) ?? []
-
-      soundclips.push({
+      const newRecord = {
         clientId: this.clientId,
+        guildId: this.guildId,
         name: this.name,
         url: this.url,
         imageUrl: this.imageUrl
-      })
+      }
 
-      console.log(soundclips)
-
-      localStorage.setItem('soundclips', JSON.stringify(soundclips))
-
+      soundclipRepo.set(newRecord)
       this.$router.go(-1)
     },
     cancel () {

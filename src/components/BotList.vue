@@ -6,11 +6,13 @@
 </template>
 
 <script>
+import { BotRepo } from '../repos/BotRepo'
+const botRepo = new BotRepo()
 export default {
   name: 'BotList',
   components: {},
   data () {
-    const bots = JSON.parse(localStorage.bots)
+    const bots = botRepo.get()
     console.log(bots)
     return {
       fields: ['clientId', 'name'],
@@ -19,7 +21,7 @@ export default {
   },
   methods: {
     botClicked (record, index) {
-      const route = { name: 'ViewBot', params: { clientId: record.clientId, name: record.name, token: record.token } }
+      const route = { name: 'ViewBot', params: { clientId: record.clientId } }
       console.log('pushing to', route)
       this.$router.push(route)
     }

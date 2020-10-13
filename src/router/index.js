@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import AddBot from '../views/AddBot.vue'
 import ViewBot from '../views/ViewBot.vue'
+import ViewServer from '../views/ViewServer.vue'
 import AddSoundClip from '../views/AddSoundClip.vue'
 
 Vue.use(VueRouter)
@@ -19,13 +20,19 @@ const routes = [
     component: AddBot
   },
   {
-    path: '/viewbot/:clientId/:name/:token',
+    path: '/viewbot/:clientId',
     name: 'ViewBot',
     component: ViewBot,
     props: true
   },
   {
-    path: '/addsoundclip/:clientId',
+    path: '/viewserver/:clientId/:guildId',
+    name: 'ViewServer',
+    component: ViewServer,
+    props: true
+  },
+  {
+    path: '/addsoundclip/:clientId/:guildId',
     name: 'AddSoundClip',
     component: AddSoundClip,
     props: true
