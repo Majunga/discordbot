@@ -8,8 +8,8 @@ const guilds = async (token) => {
     })
 }
 
-const joinVoiceAndSendMessage = async (token, data) => {
-  return axios.post('http://localhost:3000/joinvoiceandsendmessage', data, {
+const playmusic = async (token, data) => {
+  return axios.post('http://localhost:3000/playmusic', data, {
     headers: { authorization: token }
   })
 }
@@ -22,6 +22,6 @@ const sendMessage = async (token, data) => {
 
 export {
   guilds,
-  joinVoiceAndSendMessage,
+  playmusic,
   sendMessage
 }

@@ -17,7 +17,7 @@
 import { SoundclipRepo } from '../repos/SoundclipRepo'
 import { BotRepo } from '../repos/BotRepo'
 import { GuildRepo } from '../repos/GuildRepo'
-import { joinVoiceAndSendMessage } from '../lib/DiscordApi'
+import { playmusic } from '../lib/DiscordApi'
 
 const soundclipRepo = new SoundclipRepo()
 const botRepo = new BotRepo()
@@ -44,11 +44,11 @@ export default {
         guildId: soundclip.guildId,
         channelId: guild.channelId,
         userId: guild.userId,
-        message: `--play ${soundclip.url}`
+        url: `${soundclip.url}`
       }
 
       console.log(data)
-      joinVoiceAndSendMessage(botRepo.get(this.clientId).token, data).then(response => {
+      playmusic(botRepo.get(this.clientId).token, data).then(response => {
         console.log('join', response)
       })
     },
