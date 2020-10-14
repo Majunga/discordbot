@@ -19,6 +19,7 @@
 <script>
 import EditorRow from '../components/controls/EditorRow'
 import { SoundclipRepo } from '../repos/SoundclipRepo'
+import { newId } from '../lib/Util'
 const soundclipRepo = new SoundclipRepo()
 
 export default {
@@ -40,6 +41,7 @@ export default {
   methods: {
     save () {
       const newRecord = {
+        soundclipId: newId(),
         clientId: this.clientId,
         guildId: this.guildId,
         name: this.name,

@@ -18,6 +18,7 @@ export class BaseRepo {
 
   set = (record) => {
     checkIsDefined(record)
+    checkIsDefined(record[this.idName])
     const oldRecord = this.get(record[this.idName])
     const records = this.get()
 
