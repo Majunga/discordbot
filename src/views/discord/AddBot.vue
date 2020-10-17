@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import EditorRow from '../components/controls/EditorRow'
-import * as botRepo from '../services/discordApi/botRepo'
+import EditorRow from '@/components/controls/EditorRow'
+import * as botRepo from '@/services/discordApi/botRepo'
 
 export default {
   name: 'AddBot',

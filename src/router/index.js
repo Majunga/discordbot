@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import AddBot from '../views/AddBot.vue'
-import ViewBot from '../views/ViewBot.vue'
-import ViewServer from '../views/ViewServer.vue'
-import AddSoundClip from '../views/AddSoundClip.vue'
+import Home from '@/views/Home.vue'
+import AddBot from '@/views/discord/AddBot.vue'
+import ViewBot from '@/views/discord/ViewBot.vue'
+import ViewServer from '@/views/discord/ViewServer.vue'
+import AddSoundClip from '@/views/discord/AddSoundClip.vue'
 
 Vue.use(VueRouter)
 

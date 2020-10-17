@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-import Alerts from './components/controls/Alerts'
+import Alerts from '@/components/controls/Alerts'
 import Vue from 'vue'
 
 export default {

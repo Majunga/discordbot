@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import * as guildRepo from '../services/discordApi/guildRepo'
-import { isDefined, isNullOrWhitespace } from '../lib/Check'
-import { guilds } from '../lib/DiscordApi'
+import * as guildRepo from '@/services/discordApi/guildRepo'
+import { isDefined, isNullOrWhitespace } from '@/lib/Check'
+import { guilds } from '@/lib/DiscordApi'
 
 export default {
   name: 'ServerList',

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="@/assets/logo.png">
     <br/>
     <b-button variant="success" @click="addbot()">Add bot</b-button>
     <br/>
