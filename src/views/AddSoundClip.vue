@@ -18,9 +18,8 @@
 
 <script>
 import EditorRow from '../components/controls/EditorRow'
-import { SoundclipRepo } from '../repos/SoundclipRepo'
+import * as soundclipRepo from '../services/discordApi/soundclipRepo'
 import { newId } from '../lib/Util'
-const soundclipRepo = new SoundclipRepo()
 
 export default {
   name: 'AddSoundClip',
@@ -39,7 +38,7 @@ export default {
     }
   },
   methods: {
-    save () {
+    async save () {
       const newRecord = {
         soundclipId: newId(),
         clientId: this.clientId,
@@ -49,7 +48,7 @@ export default {
         imageUrl: this.imageUrl
       }
 
-      soundclipRepo.set(newRecord)
+      await soundclipRepo.set(newRecord)
       this.$router.go(-1)
     },
     cancel () {

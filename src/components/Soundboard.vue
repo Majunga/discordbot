@@ -17,12 +17,10 @@
   </div>
 </template>
 <script>
-import { SoundclipRepo } from '../repos/SoundclipRepo'
+import * as soundclipRepo from '../services/discordApi/soundclipRepo'
 import * as botRepo from '../services/discordApi/botRepo'
 import * as guildRepo from '../services/discordApi/guildRepo'
 import { playmusic } from '../lib/DiscordApi'
-
-const soundclipRepo = new SoundclipRepo()
 
 export default {
   name: 'Soundboard',
@@ -31,13 +29,14 @@ export default {
     guildId: String
   },
   data () {
-    const soundclips = soundclipRepo
-      .get()
-      .filter((s) => s.guildId === this.guildId)
     return {
       fields: ['name'],
-      soundclips: soundclips
+      soundclips: []
     }
+  },
+  async mounted () {
+    const res = await soundclipRepo.search({ guildId: this.guildId })
+    this.soundclips = res.data
   },
   methods: {
     async play (soundclip) {
