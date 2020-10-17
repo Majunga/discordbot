@@ -34,8 +34,6 @@ export default {
     EditorRow,
     ServerList
   },
-  computed: {
-  },
   props: {
     clientId: String
   },
@@ -53,8 +51,11 @@ export default {
   },
   methods: {
     async showDeleteConfirmation () {
-      await this.$bvModal.msgBoxConfirm('Are you sure?')
-      this.deleteBot()
+      const sure = await this.$bvModal.msgBoxConfirm('Are you sure?')
+      if (sure) {
+        await this.deleteBot()
+        this.$router.go()
+      }
     },
     async deleteBot () {
       await botRepo.remove(this.clientId)

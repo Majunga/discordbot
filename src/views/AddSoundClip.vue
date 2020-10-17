@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Add soundclip</h1>
+    <h1>{{this.soundclipId ? 'Edit' : 'Add'}} soundclip</h1>
     <br />
 
     <b-container>
@@ -28,7 +28,8 @@ export default {
   },
   props: {
     clientId: String,
-    guildId: String
+    guildId: String,
+    soundclipId: String
   },
   data () {
     return {
@@ -37,10 +38,18 @@ export default {
       imageUrl: undefined
     }
   },
+  async mounted () {
+    if (this.soundclipId) {
+      const res = await soundclipRepo.get(this.soundclipId)
+      this.name = res.data?.name
+      this.url = res.data?.url
+      this.imageUrl = res.data?.imageUrl
+    }
+  },
   methods: {
     async save () {
       const newRecord = {
-        soundclipId: newId(),
+        soundclipId: this.soundclipId ?? newId(),
         clientId: this.clientId,
         guildId: this.guildId,
         name: this.name,

@@ -12,13 +12,13 @@ const search = async (query) => {
   return res
 }
 
-const get = async (guildId) => {
-  console.debug('Get Soundclip', guildId)
+const get = async (soundclipId) => {
+  console.debug('Get Soundclip', soundclipId)
 
   const res = await axios
     .get('http://localhost:3001/soundclips', {
       params: {
-        guildId: guildId
+        soundclipId: soundclipId
       }
     })
 
@@ -31,13 +31,13 @@ const set = async (record) => {
   return await axios.post('http://localhost:3001/soundclips', record)
 }
 
-const remove = async (guildId) => {
-  console.debug('Remove Soundclip', guildId)
+const remove = async (soundclipId) => {
+  console.debug('Remove Soundclip', soundclipId)
 
   const res = await axios
     .delete('http://localhost:3001/soundclips', {
       params: {
-        guildId: guildId
+        soundclipId: soundclipId
       }
     })
 
