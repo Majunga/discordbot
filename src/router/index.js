@@ -32,7 +32,7 @@ const routes = [
     props: true
   },
   {
-    path: '/addsoundclip/:clientId/:guildId',
+    path: '/addsoundclip/:clientId/:guildId/:soundclipId',
     name: 'AddSoundClip',
     component: AddSoundClip,
     props: true

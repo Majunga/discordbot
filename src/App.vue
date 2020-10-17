@@ -1,12 +1,28 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">Home</router-link>
     </div>
-    <router-view/>
+    <Alerts :bus="bus"/>
+    <router-view :bus="bus"/>
   </div>
 </template>
+<script>
+import Alerts from './components/controls/Alerts'
+import Vue from 'vue'
+
+export default {
+  name: 'App',
+  components: {
+    Alerts
+  },
+  data () {
+    return {
+      bus: new Vue()
+    }
+  }
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

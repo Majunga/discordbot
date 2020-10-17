@@ -6,17 +6,14 @@
 </template>
 
 <script>
-import { BotRepo } from '../repos/BotRepo'
-const botRepo = new BotRepo()
+import * as botRepo from '../services/discordApi/botRepo'
 export default {
   name: 'BotList',
   components: {},
   data () {
-    const bots = botRepo.get()
-    console.log(bots)
     return {
       fields: ['clientId', 'name'],
-      bots: bots
+      bots: []
     }
   },
   methods: {
@@ -25,6 +22,12 @@ export default {
       console.log('pushing to', route)
       this.$router.push(route)
     }
+  },
+  mounted () {
+    botRepo.get().then((res) => {
+      this.bots = res.data
+    })
   }
+
 }
 </script>

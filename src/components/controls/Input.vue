@@ -7,8 +7,6 @@
 
 <script>
 export default {
-  name: 'Input',
-  props: {
-  }
+  name: 'Input'
 }
 </script>

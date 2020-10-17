@@ -3,9 +3,8 @@
     <h1 v-b-toggle.collapse-1 variant="primary">View Server</h1>
     <br />
     <b-container>
-      <Editor-Row type="text" label="Name"       v-model="name"      required  readonly />
-      <Editor-Row type="text" label="Channel Id" v-model="channelId" required />
-      <Editor-Row type="text" label="User Id"    v-model="userId"    required />
+      <Editor-Row type="text" label="Name"       v-model="name"   required  readonly />
+      <Editor-Row type="text" label="User Id"    v-model="userId" required />
 
       <b-button-group class="float-right">
         <b-button type="button" variant="success" @click="save()"
@@ -25,8 +24,7 @@
 <script>
 import EditorRow from '../components/controls/EditorRow'
 import Soundboard from '../components/Soundboard'
-import { GuildRepo } from '../repos/GuildRepo'
-const guildRepo = new GuildRepo()
+import * as guildRepo from '../services/discordApi/guildRepo'
 
 export default {
   name: 'ViewServer',
@@ -36,28 +34,31 @@ export default {
   },
   props: {
     clientId: String,
-    guildId: String
+    guildId: String,
+    bus: Object
   },
   data () {
-    const guild = guildRepo.get(this.guildId)
-
     return {
-      name: guild?.name,
-      channelId: guild?.channelId,
-      userId: guild?.userId
+      name: undefined,
+      userId: undefined
     }
   },
+  async mounted () {
+    const res = await guildRepo.get(this.guildId)
+    this.name = res.data.name
+    this.userId = res.data.userId
+  },
   methods: {
-    save () {
+    async save () {
       const newRecord = {
         guildId: this.guildId,
         clientId: this.clientId,
         name: this.name,
-        channelId: this.channelId,
         userId: this.userId
       }
 
-      guildRepo.set(newRecord)
+      await guildRepo.set(newRecord)
+      this.bus.$emit('alert', 'Successfully Saved', 'success')
     },
     back () {
       this.$router.go(-1)

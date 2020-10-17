@@ -5,8 +5,6 @@
       <b-container>
           <Editor-Row type="text" label="Client Id"   v-model="clientId"  required readonly />
           <Editor-Row type="text" label="Name"        v-model="name"      required />
-          <Editor-Row type="text" label="Token"       v-model="token"     required />
-
           <b-button-group class="float-left">
               <b-button type="button" variant="danger" @click="showDeleteConfirmation">Delete</b-button>
           </b-button-group>
@@ -18,7 +16,7 @@
           <hr />
       </b-container>
     <b-container>
-      <ServerList :clientId="clientId" />
+      <ServerList :clientId="clientId" v-if="token" :token="token" />
     </b-container>
   </div>
 </template>
@@ -27,11 +25,8 @@
 import EditorRow from '../components/controls/EditorRow'
 import ServerList from '../components/ServerList'
 import { isDefined } from '../lib/Check'
-import { BotRepo } from '../repos/BotRepo'
-import { GuildRepo } from '../repos/GuildRepo'
-
-const botRepo = new BotRepo()
-const guildBot = new GuildRepo()
+import * as botRepo from '../services/discordApi/botRepo'
+import * as guildRepo from '../services/discordApi/guildRepo.js'
 
 export default {
   name: 'ViewBot',
@@ -39,47 +34,50 @@ export default {
     EditorRow,
     ServerList
   },
-  computed: {
-  },
   props: {
+    bus: Object,
     clientId: String
   },
   data () {
-    const bot = botRepo.get(this.clientId)
-
     return {
-      name: bot.name,
-      token: bot.token
+      name: null,
+      token: null
     }
   },
+  async mounted () {
+    const res = await botRepo.get(this.clientId)
+    console.log('Got bot:', res)
+    this.name = res.data.name
+    this.token = res.data.token
+  },
   methods: {
-    showDeleteConfirmation () {
-      this.$bvModal.msgBoxConfirm('Are you sure?')
-        .then(value => {
-          this.deleteBot()
-        })
-        .catch(err => {
-          console.error(err)
-        })
+    async showDeleteConfirmation () {
+      const sure = await this.$bvModal.msgBoxConfirm('Are you sure?')
+      if (sure) {
+        await this.deleteBot()
+        this.$router.go()
+      }
     },
-    deleteBot () {
-      botRepo.remove(this.clientId)
-      const guild = guildBot.get()?.find(guild => guild.clientId === this.clientId)
-
-      if (isDefined(guild)) {
-        guildBot.remove(guild.clientId)
+    async deleteBot () {
+      await botRepo.remove(this.clientId)
+      const res = await guildRepo.search({ clientId: this.clientId })
+      if (isDefined(res.body)) {
+        for (const guild of res.body) {
+          await guildRepo.remove(guild.guildId)
+        }
       }
 
       this.$router.go(-1)
     },
-    save () {
+    async save () {
       const newBot = {
         clientId: this.clientId,
         name: this.name,
         token: this.token
       }
 
-      botRepo.set(newBot)
+      await botRepo.set(newBot)
+      this.bus.$emit('alert', 'Successfully Saved', 'success')
     },
     back () {
       this.$router.go(-1)

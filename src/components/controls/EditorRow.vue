@@ -22,9 +22,6 @@ export default {
   components: {
     Input
   },
-  props: {
-    label: String,
-    value: String
-  }
+  props: ['value', 'label']
 }
 </script>

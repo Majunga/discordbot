@@ -1,52 +1,62 @@
 <template>
   <b-container>
-    <b-table striped hover :items="guilds" :fields="fields" @row-clicked="rowClicked" />
+    <b-table
+      striped
+      hover
+      v-bind:items="servers"
+      :fields="fields"
+      @row-clicked="rowClicked"
+    />
   </b-container>
 </template>
 
 <script>
-import { BotRepo } from '../repos/BotRepo'
-import { GuildRepo } from '../repos/GuildRepo'
-import { isDefined } from '../lib/Check'
+import * as guildRepo from '../services/discordApi/guildRepo'
+import { isDefined, isNullOrWhitespace } from '../lib/Check'
 import { guilds } from '../lib/DiscordApi'
-
-const botRepo = new BotRepo()
-const guildRepo = new GuildRepo()
 
 export default {
   name: 'ServerList',
   props: {
-    clientId: String
+    clientId: String,
+    token: String
   },
   data () {
     return {
       fields: ['guildId', 'name'],
-      guilds: []
+      servers: undefined
+    }
+  },
+  async mounted () {
+    const vm = this
+    if (isDefined(this.token)) {
+      const response = await guilds(this.token)
+      console.log('Guilds:', response.data)
+      vm.servers = response.data
     }
   },
   methods: {
-    rowClicked (record) {
-      const guild = guildRepo.get(record.guildId)
-
-      if (isDefined(guild) === false) {
-        guildRepo.set({
+    gotoViewServer (guildId) {
+      const route = {
+        name: 'ViewServer',
+        params: { clientId: this.clientId, guildId: guildId }
+      }
+      console.log('pushing to', route)
+      this.$router.push(route)
+    },
+    async rowClicked (record, index) {
+      const guildRes = await guildRepo.get(record.guildId)
+      const guild = guildRes.body
+      if (isDefined(guild) === false || (isDefined(guild) && isNullOrWhitespace(guild.name))) {
+        await guildRepo.set({
           clientId: record.clientId,
           guildId: record.guildId,
           name: record.name
         })
       }
 
-      const route = { name: 'ViewServer', params: { clientId: this.clientId, guildId: record.guildId } }
-      console.log('pushing to', route)
-      this.$router.push(route)
+      this.gotoViewServer(record.guildId)
     }
-  },
-  mounted () {
-    guilds(botRepo.get(this.clientId).token)
-      .then(response => {
-        this.guilds = response.data
-        console.log(response)
-      })
   }
 }
 </script>
