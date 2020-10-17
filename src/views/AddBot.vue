@@ -5,14 +5,12 @@
 
     <b-container>
       <form class="addbot" @submit.prevent="addbot">
-        <Editor-Row type="number" label="Client Id" v-model.number="clientId" required />
-        <Editor-Row type="text" label="Name" v-model="name" required />
-        <Editor-Row type="text" label="Token" v-model="token" required />
+        <Editor-Row type="text" label="Client Id" v-model="clientId" required />
+        <Editor-Row type="text"   label="Name"      v-model="name"     required />
+        <Editor-Row type="text"   label="Token"     v-model="token"    required />
         <hr />
         <b-button-group class="float-right">
-          <b-button type="button" variant="success" @click="save()"
-            >Save</b-button
-          >
+          <b-button type="button" variant="success" @click="save()">Save</b-button>
           <b-button type="button" @click="cancel()">Cancel</b-button>
         </b-button-group>
       </form>

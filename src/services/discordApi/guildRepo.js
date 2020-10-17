@@ -1,19 +1,30 @@
 import * as axios from 'axios'
 
 const search = async (query) => {
-  return await axios
-    .search('http://localhost:3001/guilds', {
-      body: query
+  console.debug('Search Guilds', query)
+
+  const res = await axios
+    .get('http://localhost:3001/guilds/search', {
+      params: query
     })
+  console.debug('Search guild response', res)
+
+  return res
 }
 
 const get = async (guildId) => {
-  return await axios
+  console.debug('Get Guild', guildId)
+
+  const res = await axios
     .get('http://localhost:3001/guilds', {
       params: {
         guildId: guildId
       }
     })
+
+  console.debug('Get guild response', res)
+
+  return res
 }
 
 const set = async (record) => {
@@ -21,12 +32,18 @@ const set = async (record) => {
 }
 
 const remove = async (guildId) => {
-  return await axios
+  console.debug('Remove Guild', guildId)
+
+  const res = await axios
     .delete('http://localhost:3001/guilds', {
       params: {
         guildId: guildId
       }
     })
+
+  console.debug('Remove guild response', res)
+
+  return res
 }
 
 export {

@@ -27,8 +27,8 @@ const soundclipRepo = new SoundclipRepo()
 export default {
   name: 'Soundboard',
   props: {
-    clientId: Number,
-    guildId: Number
+    clientId: String,
+    guildId: String
   },
   data () {
     const soundclips = soundclipRepo
@@ -40,23 +40,21 @@ export default {
     }
   },
   methods: {
-    play (soundclip) {
-      guildRepo.get(soundclip.guildId).then(res => {
-        const guild = res.body
+    async play (soundclip) {
+      const res = await guildRepo.get(soundclip.guildId)
+      const guild = res.data
 
-        const data = {
-          guildId: guild.guildId,
-          userId: guild.userId,
-          url: `${soundclip.url}`
-        }
+      const data = {
+        guildId: guild.guildId,
+        userId: guild.userId,
+        url: `${soundclip.url}`
+      }
 
-        botRepo.get(this.clientId).then((resp) => {
-          console.log(data)
-          playmusic(resp.data.token, data).then((response) => {
-            console.log('join', response)
-          })
-        })
-      })
+      const botRes = await botRepo.get(this.clientId)
+      console.log(data)
+
+      const playRes = await playmusic(botRes.data.token, data)
+      console.log('join', playRes)
     },
     addSoundclip () {
       const route = {

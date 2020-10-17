@@ -3,8 +3,8 @@
     <h1 v-b-toggle.collapse-1 variant="primary">View Server</h1>
     <br />
     <b-container>
-      <Editor-Row type="text" label="Name"       v-model="name"             required  readonly />
-      <Editor-Row type="text" label="User Id"    v-model.number="userId"    required />
+      <Editor-Row type="text" label="Name"       v-model="name"   required  readonly />
+      <Editor-Row type="text" label="User Id"    v-model="userId" required />
 
       <b-button-group class="float-right">
         <b-button type="button" variant="success" @click="save()"
@@ -16,7 +16,7 @@
       <hr />
     </b-container>
     <b-container>
-      <Soundboard :clientId="clientId" guildId="guildId" />
+      <Soundboard :clientId="clientId" :guildId="guildId" />
     </b-container>
   </div>
 </template>
@@ -33,8 +33,8 @@ export default {
     Soundboard
   },
   props: {
-    clientId: Number,
-    guildId: Number
+    clientId: String,
+    guildId: String
   },
   data () {
     return {
@@ -42,14 +42,13 @@ export default {
       userId: undefined
     }
   },
-  mounted () {
-    guildRepo.get(this.guildId).then((res) => {
-      this.name = res.body.name
-      this.userId = res.body.userId
-    })
+  async mounted () {
+    const res = await guildRepo.get(this.guildId)
+    this.name = res.data.name
+    this.userId = res.data.userId
   },
   methods: {
-    save () {
+    async save () {
       const newRecord = {
         guildId: this.guildId,
         clientId: this.clientId,
@@ -57,7 +56,7 @@ export default {
         userId: this.userId
       }
 
-      guildRepo.set(newRecord)
+      await guildRepo.set(newRecord)
     },
     back () {
       this.$router.go(-1)

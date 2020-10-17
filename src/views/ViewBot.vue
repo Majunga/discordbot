@@ -16,7 +16,7 @@
           <hr />
       </b-container>
     <b-container>
-      <ServerList :clientId="clientId" v-bind:token="token" />
+      <ServerList :clientId="clientId" v-if="token" :token="token" />
     </b-container>
   </div>
 </template>
@@ -37,7 +37,7 @@ export default {
   computed: {
   },
   props: {
-    clientId: Number
+    clientId: String
   },
   data () {
     return {
@@ -45,44 +45,36 @@ export default {
       token: null
     }
   },
-  mounted () {
-    botRepo.get(this.clientId).then((res) => {
-      console.log('Got bot:', res)
-      this.name = res.data.name
-      this.token = res.data.token
-    })
+  async mounted () {
+    const res = await botRepo.get(this.clientId)
+    console.log('Got bot:', res)
+    this.name = res.data.name
+    this.token = res.data.token
   },
   methods: {
-    showDeleteConfirmation () {
-      this.$bvModal.msgBoxConfirm('Are you sure?')
-        .then(value => {
-          this.deleteBot()
-        })
-        .catch(err => {
-          console.error(err)
-        })
+    async showDeleteConfirmation () {
+      await this.$bvModal.msgBoxConfirm('Are you sure?')
+      this.deleteBot()
     },
-    deleteBot () {
-      botRepo.remove(this.clientId).then(() => {
-        guildRepo.search({ clientId: this.clientId }).then((res) => {
-          if (isDefined(res.body)) {
-            for (const guild of res.body) {
-              guildRepo.remove(guild.guildId)
-            }
-          }
+    async deleteBot () {
+      await botRepo.remove(this.clientId)
+      const res = await guildRepo.search({ clientId: this.clientId })
+      if (isDefined(res.body)) {
+        for (const guild of res.body) {
+          await guildRepo.remove(guild.guildId)
+        }
+      }
 
-          this.$router.go(-1)
-        })
-      })
+      this.$router.go(-1)
     },
-    save () {
+    async save () {
       const newBot = {
         clientId: this.clientId,
         name: this.name,
         token: this.token
       }
 
-      botRepo.set(newBot)
+      await botRepo.set(newBot)
     },
     back () {
       this.$router.go(-1)

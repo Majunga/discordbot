@@ -18,7 +18,7 @@ import { guilds } from '../lib/DiscordApi'
 export default {
   name: 'ServerList',
   props: {
-    clientId: Number,
+    clientId: String,
     token: String
   },
   data () {
@@ -27,13 +27,12 @@ export default {
       servers: undefined
     }
   },
-  mounted () {
+  async mounted () {
     const vm = this
     if (isDefined(this.token)) {
-      guilds(this.token).then((response) => {
-        console.log('Guilds:', response.data)
-        vm.servers = response.data
-      })
+      const response = await guilds(this.token)
+      console.log('Guilds:', response.data)
+      vm.servers = response.data
     }
   },
   methods: {
@@ -45,21 +44,18 @@ export default {
       console.log('pushing to', route)
       this.$router.push(route)
     },
-    rowClicked (record) {
-      guildRepo.get(record.guildId).then((res) => {
-        const guild = res.body
-        if (isDefined(guild) === false || (isDefined(guild) && isNullOrWhitespace(guild.name))) {
-          guildRepo.set({
-            clientId: record.clientId,
-            guildId: record.guildId,
-            name: record.name
-          }).then(() => {
-            this.gotoViewServer(record.guildId)
-          })
-        } else {
-          this.gotoViewServer(record.guildId)
-        }
-      })
+    async rowClicked (record, index) {
+      const guildRes = await guildRepo.get(record.guildId)
+      const guild = guildRes.body
+      if (isDefined(guild) === false || (isDefined(guild) && isNullOrWhitespace(guild.name))) {
+        await guildRepo.set({
+          clientId: record.clientId,
+          guildId: record.guildId,
+          name: record.name
+        })
+      }
+
+      this.gotoViewServer(record.guildId)
     }
   }
 }
