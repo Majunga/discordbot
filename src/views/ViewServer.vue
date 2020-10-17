@@ -34,7 +34,8 @@ export default {
   },
   props: {
     clientId: String,
-    guildId: String
+    guildId: String,
+    bus: Object
   },
   data () {
     return {
@@ -57,6 +58,7 @@ export default {
       }
 
       await guildRepo.set(newRecord)
+      this.bus.$emit('alert', 'Successfully Saved', 'success')
     },
     back () {
       this.$router.go(-1)

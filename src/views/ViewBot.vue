@@ -35,6 +35,7 @@ export default {
     ServerList
   },
   props: {
+    bus: Object,
     clientId: String
   },
   data () {
@@ -76,6 +77,7 @@ export default {
       }
 
       await botRepo.set(newBot)
+      this.bus.$emit('alert', 'Successfully Saved', 'success')
     },
     back () {
       this.$router.go(-1)
