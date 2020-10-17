@@ -18,19 +18,17 @@
 </template>
 <script>
 import { SoundclipRepo } from '../repos/SoundclipRepo'
-import { BotRepo } from '../repos/BotRepo'
-import { GuildRepo } from '../repos/GuildRepo'
+import * as botRepo from '../services/discordApi/botRepo'
+import * as guildRepo from '../services/discordApi/guildRepo'
 import { playmusic } from '../lib/DiscordApi'
 
 const soundclipRepo = new SoundclipRepo()
-const botRepo = new BotRepo()
-const guildRepo = new GuildRepo()
 
 export default {
   name: 'Soundboard',
   props: {
-    clientId: String,
-    guildId: String
+    clientId: Number,
+    guildId: Number
   },
   data () {
     const soundclips = soundclipRepo
@@ -43,18 +41,21 @@ export default {
   },
   methods: {
     play (soundclip) {
-      const guild = guildRepo.get(soundclip.guildId)
+      guildRepo.get(soundclip.guildId).then(res => {
+        const guild = res.body
 
-      const data = {
-        guildId: soundclip.guildId,
-        channelId: guild.channelId,
-        userId: guild.userId,
-        url: `${soundclip.url}`
-      }
+        const data = {
+          guildId: guild.guildId,
+          userId: guild.userId,
+          url: `${soundclip.url}`
+        }
 
-      console.log(data)
-      playmusic(botRepo.get(this.clientId).token, data).then((response) => {
-        console.log('join', response)
+        botRepo.get(this.clientId).then((resp) => {
+          console.log(data)
+          playmusic(resp.data.token, data).then((response) => {
+            console.log('join', response)
+          })
+        })
       })
     },
     addSoundclip () {

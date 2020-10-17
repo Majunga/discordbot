@@ -1,52 +1,66 @@
 <template>
   <b-container>
-    <b-table striped hover :items="guilds" :fields="fields" @row-clicked="rowClicked" />
+    <b-table
+      striped
+      hover
+      v-bind:items="servers"
+      :fields="fields"
+      @row-clicked="rowClicked"
+    />
   </b-container>
 </template>
 
 <script>
-import { BotRepo } from '../repos/BotRepo'
-import { GuildRepo } from '../repos/GuildRepo'
-import { isDefined } from '../lib/Check'
+import * as guildRepo from '../services/discordApi/guildRepo'
+import { isDefined, isNullOrWhitespace } from '../lib/Check'
 import { guilds } from '../lib/DiscordApi'
-
-const botRepo = new BotRepo()
-const guildRepo = new GuildRepo()
 
 export default {
   name: 'ServerList',
   props: {
-    clientId: String
+    clientId: Number,
+    token: String
   },
   data () {
     return {
       fields: ['guildId', 'name'],
-      guilds: []
-    }
-  },
-  methods: {
-    rowClicked (record) {
-      const guild = guildRepo.get(record.guildId)
-
-      if (isDefined(guild) === false) {
-        guildRepo.set({
-          clientId: record.clientId,
-          guildId: record.guildId,
-          name: record.name
-        })
-      }
-
-      const route = { name: 'ViewServer', params: { clientId: this.clientId, guildId: record.guildId } }
-      console.log('pushing to', route)
-      this.$router.push(route)
+      servers: undefined
     }
   },
   mounted () {
-    guilds(botRepo.get(this.clientId).token)
-      .then(response => {
-        this.guilds = response.data
-        console.log(response)
+    const vm = this
+    if (isDefined(this.token)) {
+      guilds(this.token).then((response) => {
+        console.log('Guilds:', response.data)
+        vm.servers = response.data
       })
+    }
+  },
+  methods: {
+    gotoViewServer (guildId) {
+      const route = {
+        name: 'ViewServer',
+        params: { clientId: this.clientId, guildId: guildId }
+      }
+      console.log('pushing to', route)
+      this.$router.push(route)
+    },
+    rowClicked (record) {
+      guildRepo.get(record.guildId).then((res) => {
+        const guild = res.body
+        if (isDefined(guild) === false || (isDefined(guild) && isNullOrWhitespace(guild.name))) {
+          guildRepo.set({
+            clientId: record.clientId,
+            guildId: record.guildId,
+            name: record.name
+          }).then(() => {
+            this.gotoViewServer(record.guildId)
+          })
+        } else {
+          this.gotoViewServer(record.guildId)
+        }
+      })
+    }
   }
 }
 </script>
