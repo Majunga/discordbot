@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link>
+      <router-link to="/">Home</router-link> |
+      <router-link v-if="loggedIn" to="/logout">Log out</router-link>
+      <router-link v-if="!loggedIn" to="/login">Log in</router-link>
+
     </div>
     <Alerts :bus="bus"/>
     <router-view :bus="bus"/>
@@ -10,6 +13,7 @@
 <script>
 import Alerts from '@/components/controls/Alerts'
 import Vue from 'vue'
+import auth from '@/services/authentication/auth'
 
 export default {
   name: 'App',
@@ -18,7 +22,13 @@ export default {
   },
   data () {
     return {
-      bus: new Vue()
+      bus: new Vue(),
+      loggedIn: auth.loggedIn()
+    }
+  },
+  created () {
+    auth.onChange = loggedIn => {
+      this.loggedIn = loggedIn
     }
   }
 }
