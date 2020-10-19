@@ -1,25 +1,16 @@
-import * as axios from 'axios'
-const url = `${process.env.VUE_APP_APIURL}/bots`
+import RepoBase from './repoBase'
+const client = new RepoBase('bots')
+
 const get = async (clientId) => {
-  return await axios
-    .get(url, {
-      params: {
-        clientId: clientId
-      }
-    })
+  return await client.get(clientId)
 }
 
 const set = async (record) => {
-  return await axios.post(url, record)
+  return await client.post(record)
 }
 
 const remove = async (clientId) => {
-  return await axios
-    .delete(url, {
-      params: {
-        clientId: clientId
-      }
-    })
+  return await client.delete(clientId)
 }
 
 export {

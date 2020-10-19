@@ -1,50 +1,20 @@
-import * as axios from 'axios'
-const url = `${process.env.VUE_APP_APIURL}/soundclips`
+import RepoBase from './repoBase'
+const client = new RepoBase('soundclips')
 
 const search = async (query) => {
-  console.debug('Search Soundclips', query)
-
-  const res = await axios
-    .get(`${url}/search`, {
-      params: query
-    })
-  console.debug('Search soundclip response', res)
-
-  return res
+  return await client.search(query)
 }
 
-const get = async (soundclipId) => {
-  console.debug('Get Soundclip', soundclipId)
-
-  const res = await axios
-    .get(url, {
-      params: {
-        soundclipId: soundclipId
-      }
-    })
-
-  console.debug('Get soundclip response', res)
-
-  return res
+const get = async (clientId) => {
+  return await client.get(clientId)
 }
 
 const set = async (record) => {
-  return await axios.post(url, record)
+  return await client.post(record)
 }
 
-const remove = async (soundclipId) => {
-  console.debug('Remove Soundclip', soundclipId)
-
-  const res = await axios
-    .delete(url, {
-      params: {
-        soundclipId: soundclipId
-      }
-    })
-
-  console.debug('Remove soundclip response', res)
-
-  return res
+const remove = async (clientId) => {
+  return await client.delete(clientId)
 }
 
 export {
