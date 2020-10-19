@@ -2,9 +2,22 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link v-if="loggedIn" to="/logout">Log out</router-link>
-      <router-link v-if="!loggedIn" to="/login">Log in</router-link>
-
+        <a
+          class="item"
+          v-if="!authenticated"
+          v-on:click="login()"
+        >
+        Login
+        </a>
+        <router-link
+          to="/"
+          id="logout-button"
+          class="item"
+          v-if="authenticated"
+          v-on:click.native="logout()"
+        >
+        Logout
+        </router-link>
     </div>
     <Alerts :bus="bus"/>
     <router-view :bus="bus"/>
@@ -13,7 +26,6 @@
 <script>
 import Alerts from '@/components/controls/Alerts'
 import Vue from 'vue'
-import auth from '@/services/authentication/auth'
 
 export default {
   name: 'App',
@@ -23,12 +35,24 @@ export default {
   data () {
     return {
       bus: new Vue(),
-      loggedIn: auth.loggedIn()
+      authenticated: false
     }
   },
-  created () {
-    auth.onChange = loggedIn => {
-      this.loggedIn = loggedIn
+  created () { this.isAuthenticated() },
+  watch: {
+    // Everytime the route changes, check for auth status
+    $route: 'isAuthenticated'
+  },
+  methods: {
+    async isAuthenticated () {
+      this.authenticated = await this.$auth.isAuthenticated()
+    },
+    login () {
+      this.$auth.loginRedirect('/')
+    },
+    async logout () {
+      await this.$auth.logout()
+      await this.isAuthenticated()
     }
   }
 }

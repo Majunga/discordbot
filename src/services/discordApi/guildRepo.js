@@ -1,10 +1,11 @@
 import * as axios from 'axios'
+const url = `${process.env.VUE_APP_APIURL}/guilds`
 
 const search = async (query) => {
   console.debug('Search Guilds', query)
 
   const res = await axios
-    .get('http://localhost:3001/guilds/search', {
+    .get(`${url}/search`, {
       params: query
     })
   console.debug('Search guild response', res)
@@ -16,7 +17,7 @@ const get = async (guildId) => {
   console.debug('Get Guild', guildId)
 
   const res = await axios
-    .get('http://localhost:3001/guilds', {
+    .get(url, {
       params: {
         guildId: guildId
       }
@@ -28,14 +29,14 @@ const get = async (guildId) => {
 }
 
 const set = async (record) => {
-  return await axios.post('http://localhost:3001/guilds', record)
+  return await axios.post(url, record)
 }
 
 const remove = async (guildId) => {
   console.debug('Remove Guild', guildId)
 
   const res = await axios
-    .delete('http://localhost:3001/guilds', {
+    .delete(url, {
       params: {
         guildId: guildId
       }

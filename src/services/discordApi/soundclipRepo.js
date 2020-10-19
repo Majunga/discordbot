@@ -1,10 +1,11 @@
 import * as axios from 'axios'
+const url = `${process.env.VUE_APP_APIURL}/soundclips`
 
 const search = async (query) => {
   console.debug('Search Soundclips', query)
 
   const res = await axios
-    .get('http://localhost:3001/soundclips/search', {
+    .get(`${url}/search`, {
       params: query
     })
   console.debug('Search soundclip response', res)
@@ -16,7 +17,7 @@ const get = async (soundclipId) => {
   console.debug('Get Soundclip', soundclipId)
 
   const res = await axios
-    .get('http://localhost:3001/soundclips', {
+    .get(url, {
       params: {
         soundclipId: soundclipId
       }
@@ -28,14 +29,14 @@ const get = async (soundclipId) => {
 }
 
 const set = async (record) => {
-  return await axios.post('http://localhost:3001/soundclips', record)
+  return await axios.post(url, record)
 }
 
 const remove = async (soundclipId) => {
   console.debug('Remove Soundclip', soundclipId)
 
   const res = await axios
-    .delete('http://localhost:3001/soundclips', {
+    .delete(url, {
       params: {
         soundclipId: soundclipId
       }
