@@ -23,10 +23,10 @@
   </div>
 </template>
 <script>
-import * as soundclipRepo from '../services/discordApi/soundclipRepo'
-import * as botRepo from '../services/discordApi/botRepo'
-import * as guildRepo from '../services/discordApi/guildRepo'
-import { playmusic } from '../lib/DiscordApi'
+import * as soundclipRepo from '@/services/discordApi/soundclipRepo'
+import * as botRepo from '@/services/discordApi/botRepo'
+import * as guildRepo from '@/services/discordApi/guildRepo'
+import { playmusic } from '@/lib/DiscordApi'
 
 export default {
   name: 'Soundboard',

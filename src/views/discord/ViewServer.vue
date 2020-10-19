@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import EditorRow from '../components/controls/EditorRow'
-import Soundboard from '../components/Soundboard'
-import * as guildRepo from '../services/discordApi/guildRepo'
+import EditorRow from '@/components/controls/EditorRow'
+import Soundboard from '@/components/Soundboard'
+import * as guildRepo from '@/services/discordApi/guildRepo'
 
 export default {
   name: 'ViewServer',

@@ -22,11 +22,11 @@
 </template>
 
 <script>
-import EditorRow from '../components/controls/EditorRow'
-import ServerList from '../components/ServerList'
-import { isDefined } from '../lib/Check'
-import * as botRepo from '../services/discordApi/botRepo'
-import * as guildRepo from '../services/discordApi/guildRepo.js'
+import EditorRow from '@/components/controls/EditorRow'
+import ServerList from '@/components/ServerList'
+import { isDefined } from '@/lib/Check'
+import * as botRepo from '@/services/discordApi/botRepo'
+import * as guildRepo from '@/services/discordApi/guildRepo.js'
 
 export default {
   name: 'ViewBot',

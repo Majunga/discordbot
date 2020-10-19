@@ -1,29 +1,55 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import AddBot from '../views/AddBot.vue'
-import ViewBot from '../views/ViewBot.vue'
-import ViewServer from '../views/ViewServer.vue'
-import AddSoundClip from '../views/AddSoundClip.vue'
+import Home from '@/views/Home.vue'
+import AddBot from '@/views/discord/AddBot.vue'
+import ViewBot from '@/views/discord/ViewBot.vue'
+import ViewServer from '@/views/discord/ViewServer.vue'
+import AddSoundClip from '@/views/discord/AddSoundClip.vue'
+import Auth from '@okta/okta-vue'
+
+const { CLIENT_ID, ISSUER, OKTA_TESTING_DISABLEHTTPSCHECK } = process.env
 
 Vue.use(VueRouter)
+Vue.use(Auth, {
+  clientId: CLIENT_ID,
+  issuer: ISSUER,
+  redirectUri: 'http://localhost:8081/login/callback',
+  scopes: ['openid', 'profile', 'email'],
+  pkce: true,
+  testing: {
+    disableHttpsCheck: OKTA_TESTING_DISABLEHTTPSCHECK
+  }
+})
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/login/callback',
+    component: Auth.handleCallback()
   },
   {
     path: '/addbot',
     name: 'AddBot',
-    component: AddBot
+    component: AddBot,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/viewbot/:clientId',
     name: 'ViewBot',
     component: ViewBot,
-    props: true
+    props: true,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/viewserver/:clientId/:guildId',
@@ -45,4 +71,5 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
 export default router

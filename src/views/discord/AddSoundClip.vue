@@ -17,9 +17,9 @@
 </template>
 
 <script>
-import EditorRow from '../components/controls/EditorRow'
-import * as soundclipRepo from '../services/discordApi/soundclipRepo'
-import { newId } from '../lib/Util'
+import EditorRow from '@/components/controls/EditorRow'
+import * as soundclipRepo from '@/services/discordApi/soundclipRepo'
+import { newId } from '@/lib/Util'
 
 export default {
   name: 'AddSoundClip',

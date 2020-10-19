@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import * as botRepo from '../services/discordApi/botRepo'
+import * as botRepo from '@/services/discordApi/botRepo'
 export default {
   name: 'BotList',
   components: {},
