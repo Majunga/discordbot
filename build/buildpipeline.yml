@@ -1,0 +1,28 @@
+resources:
+- repo: self
+queue:
+  name: Default
+
+trigger:
+  batch: true
+  branches: 
+    - master
+
+variables:
+  registryServerName: '$(registryName).azurecr.io'
+  imageName: '$(projectName)'
+  buildId: '$(build.buildId)'
+  # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
+
+steps:
+- powershell: docker build -f $(system.defaultWorkingDirectory)/Dockerfile -t $(registryServerName)/$(imageName):$(build.buildId) -t $(registryServerName)/$(imageName):releaselatest $(system.defaultWorkingDirectory)
+  displayName: 'docker build'
+
+- powershell: docker login $(registryServerName) -u $(registryLogin) -p $(registryPassword)
+  displayName: 'docker login'
+
+- powershell: |
+    docker push $(registryServerName)/$(imageName):$(build.buildId)
+    docker push $(registryServerName)/$(imageName):latest
+  displayName: 'docker push'
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
