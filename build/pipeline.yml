@@ -1,0 +1,58 @@
+resources:
+- repo: self
+queue:
+  name: Default
+
+trigger:
+  batch: true # batch changes if true, start a new build for every push if false
+  paths:
+    include: [ "src/$(projectName)" ] # file paths which must match to trigger a build
+
+variables:
+  registryServerName: '$(registryName).azurecr.io'
+  imageName: '$(projectName)'
+  buildId: '$(build.buildId)'
+  # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
+
+steps:
+- powershell: docker build -f $(system.defaultWorkingDirectory)/Dockerfile -t $(registryServerName)/$(imageName):$(build.buildId) -t $(registryServerName)/$(imageName):latest $(system.defaultWorkingDirectory)
+  displayName: 'docker build'
+
+- powershell: docker login $(registryServerName) -u $(registryLogin) -p $(registryPassword)
+  displayName: 'docker login'
+
+- powershell: |
+    docker push $(registryServerName)/$(imageName):$(build.buildId)
+    docker push $(registryServerName)/$(imageName):latest
+  displayName: 'docker push'
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
+- task: replacetokens@3
+  inputs:
+    rootDirectory: '$(system.defaultWorkingDirectory)'
+    targetFiles: './build/$(projectName)/$(projectName).yml'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    tokenPrefix: '#{'
+    tokenSuffix: '}#'
+    useLegacyPattern: false
+    enableTelemetry: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Kubernetes Deployment config to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: ./build/$(projectName)
+    Contents: |
+     $(projectName).yml
+     
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  name: '$(buildName)' 
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)'
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
