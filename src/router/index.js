@@ -7,17 +7,17 @@ import ViewServer from '@/views/discord/ViewServer.vue'
 import AddSoundClip from '@/views/discord/AddSoundClip.vue'
 import Auth from '@okta/okta-vue'
 
-const { CLIENT_ID, ISSUER, OKTA_TESTING_DISABLEHTTPSCHECK } = process.env
-
+const { VUE_APP_REDIRECTURL, VUE_APP_CLIENT_ID, VUE_APP_ISSUER, VUE_APP_OKTA_TESTING_DISABLEHTTPSCHECK } = process.env
+console.log(process.env)
 Vue.use(VueRouter)
 Vue.use(Auth, {
-  clientId: CLIENT_ID,
-  issuer: ISSUER,
-  redirectUri: 'http://localhost:8081/login/callback',
+  clientId: VUE_APP_CLIENT_ID,
+  issuer: VUE_APP_ISSUER,
+  redirectUri: VUE_APP_REDIRECTURL,
   scopes: ['openid', 'profile', 'email'],
   pkce: true,
   testing: {
-    disableHttpsCheck: OKTA_TESTING_DISABLEHTTPSCHECK
+    disableHttpsCheck: VUE_APP_OKTA_TESTING_DISABLEHTTPSCHECK
   }
 })
 

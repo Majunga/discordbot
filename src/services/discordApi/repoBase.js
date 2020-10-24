@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 const client = axios.create({
-  baseURL: process.env.VUE_APP_APIURL,
+  baseURL: `${process.env.VUE_APP_APIURL}/`,
   json: true
 })
 
