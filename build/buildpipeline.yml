@@ -5,12 +5,12 @@ queue:
 
 trigger:
   batch: true
-  branches: 
+  branches:
+    include:
     - master
 
 variables:
   registryServerName: '$(registryName).azurecr.io'
-  imageName: '$(projectName)'
   buildId: '$(build.buildId)'
   # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
 
