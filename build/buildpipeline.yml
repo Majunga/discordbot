@@ -12,6 +12,7 @@ trigger:
 variables:
   registryServerName: '$(registryName).azurecr.io'
   buildId: '$(build.buildId)'
+  apiurl: '$(url):$(backendport)'
   # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
 
 steps:
