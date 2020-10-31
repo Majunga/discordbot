@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discordweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: discordweb
+      service: discordweb
+      color: green
+  minReadySeconds: 1
+  progressDeadlineSeconds: 60
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        type: discordweb
+        service: discordweb
+        color: green
+        language: javascript
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: discordweb
+        image: majunga.azurecr.io/discordweb:#{buildId}#
+        imagePullPolicy: Always
+        ports:
+        - containerPort: #{frontPorts}#
+          name: discordweb
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: discordweb
+spec:
+  type: NodePort
+  ports:
+  - port: #{frontPorts}#
+  selector:
+    type: discordweb
+    service: discordweb
+    color: green
