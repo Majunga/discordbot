@@ -12,7 +12,6 @@ trigger:
 variables:
   registryServerName: '$(registryName).azurecr.io'
   buildId: '$(build.buildId)'
-  apiurl: '$(url):$(backendport)'
   # define 4 more variables: projectName, registryName, registryLogin and registryPassword in the build pipeline in UI
 
 steps:
@@ -27,3 +26,16 @@ steps:
     docker push $(registryServerName)/$(imageName):latest
   displayName: 'docker push'
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
+- task: CopyFiles@2
+  displayName: 'Copy Deployment config to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: 'build/$(projectName)-deployment.yml'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'discordweb'
+    publishLocation: 'Container'
