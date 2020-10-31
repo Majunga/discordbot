@@ -31,7 +31,7 @@ steps:
   displayName: 'Copy Deployment config to: $(Build.ArtifactStagingDirectory)'
   inputs:
     SourceFolder: '$(System.DefaultWorkingDirectory)'
-    Contents: 'build/$(projectName)-deployment.yml'
+    Contents: 'build/$(projectName).deployment.yml'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     
 - task: PublishBuildArtifacts@1
